@@ -1,5 +1,6 @@
 import speech_recognition as sr
 from gtts import gTTS
+<<<<<<< HEAD
 import playsound
 import os, sys, contextlib
 import colorutils
@@ -36,6 +37,12 @@ chime.theme("material")
 # mode = Mode.DEFAULT
 
 mode = "DEFAULT"
+=======
+import os, sys
+import time
+import playsound
+
+>>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
 
 # import pyttsx3
 
@@ -44,6 +51,11 @@ mode = "DEFAULT"
 # engine.setProperty("voice", voices[1].id)  # setting voice properties
 # engine.setProperty("rate", 130)  # sets speed of speech
 
+<<<<<<< HEAD
+=======
+import time, os, sys, contextlib
+
+>>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
 
 @contextlib.contextmanager
 def suppress():
@@ -60,6 +72,7 @@ def suppress():
 
 
 def speak(text):
+<<<<<<< HEAD
     # if mode != Mode.SILENT:
     if mode != "SILENT":
         # engine.say(text)
@@ -68,24 +81,45 @@ def speak(text):
         filename = "voice.mp3"
         tts.save(filename)
         playsound.playsound(filename)
+=======
+    # engine.say(text)
+    # engine.runAndWait()
+
+    tts = gTTS(text=text, lang="en")
+    filename = "voice.mp3"
+    tts.save(filename)
+    playsound.playsound(filename)
+>>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
 
 
 def listen():
     with suppress():
         r = sr.Recognizer()
         with sr.Microphone() as source:
+<<<<<<< HEAD
             r.energy_threshold = 4000
             r.adjust_for_ambient_noise(source)
             audio = r.listen(source)
             said = ""
+=======
+            r.adjust_for_ambient_noise(source)
+            audio = r.listen(source)
+            said = ""
+
+>>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
             try:
                 said = r.recognize_google(audio)
             except Exception as e:
                 pass
+<<<<<<< HEAD
+=======
+
+>>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
         return said
 
 
 # speak("activated")
+<<<<<<< HEAD
 # def get_mikes():
 #     with suppress():
 #         l = sr.Microphone.list_microphone_names()
@@ -216,3 +250,23 @@ while RUN_SERVER:
                 speak("Sorry, I didn't catch that.")
             if retry == 2:
                 speak("Could you say that again?")
+=======
+def get_mikes():
+    with suppress():
+        l = sr.Microphone.list_microphone_names()
+        print("printing microphone names:")
+        print(l)
+
+
+WAKE = "hey thea"
+
+# def contains_wake(command):
+# get_mikes()
+
+while True:
+    print("Listening")
+    command = listen().lower()
+    if command.count(WAKE) > 0:
+        speak("How can I help you?")
+        command = listen()
+>>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
