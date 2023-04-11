@@ -4,6 +4,7 @@ voice.mp3
 __pycache__
 models/glove.6B.50d.txt
 models/glove.6B.100d.txt
+models/glove.6B.100d.zip
 models/glove.6B.200d.txt
 models/glove.6B.300d.txt
 test_led

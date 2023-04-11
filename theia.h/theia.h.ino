@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 
 // Code based on various Arduino Examples that are in public domain
 // https://github.com/arduino-libraries/WiFi101/tree/master/examples
 
-#include <WiFi101.h>
+#include <WiFiNINA.h>
 #include <SPI.h>
 
 #include "secrets.h"
@@ -15,17 +14,22 @@ int green = 2;
 int red = 1;
 int blue = 0;
 
-int rs[] = {100, 0, 0};
-int gs[] = {100, 0, 0};
+int rs[] = {250, 0, 0};
+int gs[] = {200, 0, 0};
 int bs[] = {0, 0, 0};
 int currentColor = 0;
 float cR = 0;
 float cG = 0;
 float cB = 0;
-float rate = 0.5;
+float rate = 0.1;
 int colors = 1;
 float brightness = 1;
 int count = 0;
+int DELAY = 20;
+float STAY = 10;
+float stay = 100;
+int DEBUG = false;
+int curStay = 0;
 WiFiServer server(80);
 
 
@@ -49,7 +53,7 @@ void setup() {
   pinMode(red, OUTPUT); 
   pinMode(green, OUTPUT); 
   pinMode(blue, OUTPUT); 
-  while (!Serial);
+//  while (!Serial);
 
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to network: ");
@@ -184,10 +188,10 @@ void loop() {
   
                   break;
                 case 'f':
-                  rate = rate * 1.5;
+                  rate = rate * 1.7;
                   break;
                 case 's':
-                  rate = rate / 1.5;
+                  rate = rate / 1.7;
                   break;
                 case 'b':
                   brightness =  ((double) command.substring(1).toInt() / 100.0);
@@ -200,9 +204,9 @@ void loop() {
                   break;
                 case 'm':
                   colors = 1;
-                  bs[0] = 255;
-                  gs[0] = 255;
-                  rs[0] = 191;
+                  bs[0] = 0;
+                  gs[0] = 200;
+                  rs[0] = 255;
                   break;
                 default:
                   break;
@@ -229,41 +233,53 @@ void loop() {
   int dR = (int) (rs[currentColor]*brightness - cR);
   int dG = (int) (gs[currentColor]*brightness - cG);
   int dB = (int) (bs[currentColor]*brightness - cB);
+  stay = STAY / rate;
   if (abs(dR) < 1 && abs(dG) < 1 && abs(dB) < 1){
-    currentColor = (currentColor + 1) % colors;
+    if (curStay > stay){
+      currentColor = (currentColor + 1) % colors;
+      curStay = 0;
+      dR = (int) (rs[currentColor]*brightness - cR);
+      dG = (int) (gs[currentColor]*brightness - cG);
+      dB = (int) (bs[currentColor]*brightness - cB);
+    }
+    else{
+      curStay++;
+    }
+   
 //    dR =(int) rs[currentColor]*brightness - cR;
 //    dG = (int) gs[currentColor]*brightness - cG;
 //    dB = (int) bs[currentColor]*brightness - cB;
   }
   count++;
-  if (count%500 == 0){
-    Serial.println();
-    Serial.println(currentColor);
-    Serial.println(colors);
-    Serial.println(brightness);
-    Serial.println("cR, cG, cB");
-    Serial.print(cR);
-    Serial.print(" ");
-    Serial.print(cG);
-    Serial.print(" ");
-    Serial.println(cB);
-    Serial.println("targets ");
-    Serial.print(rs[currentColor]*brightness);
-    Serial.print(" ");
-    Serial.print(gs[currentColor]*brightness);
-    Serial.print(" ");
-    Serial.println(bs[currentColor]*brightness);
-    Serial.println("value");
-    Serial.print((int) ( cG));
-    Serial.print(" ");
-    Serial.print((int) (cR));
-    Serial.print(" ");
-    Serial.print((int) (cB));
-   
+  if (count%50 == 0){
+    if (DEBUG){
+      Serial.println();
+      Serial.println(currentColor);
+      Serial.println(colors);
+      Serial.println(brightness);
+      Serial.println("cR, cG, cB");
+      Serial.print(cR);
+      Serial.print(" ");
+      Serial.print(cG);
+      Serial.print(" ");
+      Serial.println(cB);
+      Serial.println("targets ");
+      Serial.print(rs[currentColor]*brightness);
+      Serial.print(" ");
+      Serial.print(gs[currentColor]*brightness);
+      Serial.print(" ");
+      Serial.println(bs[currentColor]*brightness);
+      Serial.println("value");
+      Serial.print((int) ( cR));
+      Serial.print(" ");
+      Serial.print((int) (cG));
+      Serial.print(" ");
+      Serial.print((int) (cB));
+    }
     count = 0;
   }
 
- 
+  
   
   
   float maxVal = max(cG, max(cR, cB));
@@ -271,21 +287,24 @@ void loop() {
   scale = 1;
 
   if (abs(dR) + abs(dG) + abs(dB) < 5){
-    cG = gs[currentColor];
-    cB = bs[currentColor];
-    cR = rs[currentColor];
+    cG = gs[currentColor]*brightness;
+    cB = bs[currentColor] * brightness;
+    cR = rs[currentColor] * brightness;
   }
   else{
     cR = cR +  rate * getDiff(dR);
     cG = cG + rate * getDiff(dG);
     cB = cB + rate * getDiff(dB);
   }
+  cR = max(min(cR, 255), 0);
+  cG = max(min(cG, 255), 0);
+  cB = max(min(cB, 255), 0);
   analogWrite(green, (int) ( cG));
   analogWrite(red, (int) (cR));
   analogWrite(blue, (int) (cB));
-  delay(50);
+  delay(DELAY);
   if (currentColor >= colors){
-    currentColor = 1;
+    currentColor = 0;
   }
   
 }
@@ -348,42 +367,4 @@ void printWiFiStatus() {
   Serial.print("To see this page in action, open a browser to http://");
 
   Serial.println(ip);
-=======
-/*
-  Blink
-
-  Turns an LED on for one second, then off for one second, repeatedly.
-
-  Most Arduinos have an on-board LED you can control. On the UNO, MEGA and ZERO
-  it is attached to digital pin 13, on MKR1000 on pin 6. LED_BUILTIN is set to
-  the correct LED pin independent of which board is used.
-  If you want to know what pin the on-board LED is connected to on your Arduino
-  model, check the Technical Specs of your board at:
-  https://www.arduino.cc/en/Main/Products
-
-  modified 8 May 2014
-  by Scott Fitzgerald
-  modified 2 Sep 2016
-  by Arturo Guadalupi
-  modified 8 Sep 2016
-  by Colby Newman
-
-  This example code is in the public domain.
-
-  https://www.arduino.cc/en/Tutorial/BuiltInExamples/Blink
-*/
-
-// the setup function runs once when you press reset or power the board
-void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
-}
-
-// the loop function runs over and over again forever
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
->>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
 }
