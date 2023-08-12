@@ -13,6 +13,7 @@ int status = WL_IDLE_STATUS;     // the Wifi radio's status
 int green = 2;
 int red = 1;
 int blue = 0;
+byte mac[6];  
 
 int rs[] = {250, 0, 0};
 int gs[] = {200, 0, 0};
@@ -30,6 +31,8 @@ float STAY = 10;
 float stay = 100;
 int DEBUG = false;
 int curStay = 0;
+
+IPAddress ip(192,168,1,229);
 WiFiServer server(80);
 
 
@@ -39,6 +42,21 @@ void printData() {
   IPAddress ip = WiFi.localIP();
   Serial.print("IP Address: ");
   Serial.println(ip);
+  Serial.println();
+  Serial.print("Mac Address: ");
+  WiFi.macAddress(mac);
+  Serial.print("MAC: ");
+  Serial.print(mac[5],HEX);
+  Serial.print(":");
+  Serial.print(mac[4],HEX);
+  Serial.print(":");
+  Serial.print(mac[3],HEX);
+  Serial.print(":");
+  Serial.print(mac[2],HEX);
+  Serial.print(":");
+  Serial.print(mac[1],HEX);
+  Serial.print(":");
+  Serial.println(mac[0],HEX);
 
   Serial.println();
   Serial.println("Network Information:");
@@ -59,6 +77,8 @@ void setup() {
     Serial.print("Attempting to connect to network: ");
     Serial.println(ssid);
     // Connect to WPA/WPA2 network:
+    WiFi.config(ip);
+
     status = WiFi.begin(ssid, pass);
 
     // wait 10 seconds for connection:

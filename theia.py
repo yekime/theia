@@ -1,6 +1,5 @@
 import speech_recognition as sr
 from gtts import gTTS
-<<<<<<< HEAD
 import playsound
 import os, sys, contextlib
 import colorutils
@@ -28,34 +27,7 @@ IGNORE_WORDS = [
 ]
 chime.theme("material")
 
-
-# class Mode(Enum):
-#     DEFAULT: 1
-#     SILENT: 2
-
-
-# mode = Mode.DEFAULT
-
 mode = "DEFAULT"
-=======
-import os, sys
-import time
-import playsound
-
->>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
-
-# import pyttsx3
-
-# engine = pyttsx3.init("sapi5")
-# voices = engine.getProperty("voices")  # fetching different voices from the system
-# engine.setProperty("voice", voices[1].id)  # setting voice properties
-# engine.setProperty("rate", 130)  # sets speed of speech
-
-<<<<<<< HEAD
-=======
-import time, os, sys, contextlib
-
->>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
 
 @contextlib.contextmanager
 def suppress():
@@ -72,81 +44,26 @@ def suppress():
 
 
 def speak(text):
-<<<<<<< HEAD
-    # if mode != Mode.SILENT:
     if mode != "SILENT":
-        # engine.say(text)
-        # engine.runAndWait()
         tts = gTTS(text=text, lang="en")
         filename = "voice.mp3"
         tts.save(filename)
         playsound.playsound(filename)
-=======
-    # engine.say(text)
-    # engine.runAndWait()
-
-    tts = gTTS(text=text, lang="en")
-    filename = "voice.mp3"
-    tts.save(filename)
-    playsound.playsound(filename)
->>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
 
 
 def listen():
     with suppress():
         r = sr.Recognizer()
         with sr.Microphone() as source:
-<<<<<<< HEAD
             r.energy_threshold = 4000
             r.adjust_for_ambient_noise(source)
             audio = r.listen(source)
             said = ""
-=======
-            r.adjust_for_ambient_noise(source)
-            audio = r.listen(source)
-            said = ""
-
->>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
             try:
                 said = r.recognize_google(audio)
             except Exception as e:
                 pass
-<<<<<<< HEAD
-=======
-
->>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
         return said
-
-
-# speak("activated")
-<<<<<<< HEAD
-# def get_mikes():
-#     with suppress():
-#         l = sr.Microphone.list_microphone_names()
-#         print("printing microphone names:")
-#         print(l)
-
-
-# # print(colors)
-# command = []
-# command.append("hey thea set the color to deep pink")
-# command.append("hey thea i want a lime green and purple color")
-# command.append("hey thea set the color to red")
-# command.append("hey thea give me a medium purple color")
-# for c in command:
-#     print("command: ", c)
-#     c.replace("color", "").replace("hey thea", "")
-#     print(find_colors(c))
-#     print(
-#         list(
-#             map(
-#                 lambda color: list(
-#                     map(lambda x: int(255 * x), mcolors.to_rgb(colors[color]))
-#                 ),
-#                 find_colors(c),
-#             )
-#         )
-#     )
 
 retry = 0
 
@@ -242,15 +159,12 @@ while RUN_SERVER:
         if retry >= 3:
             retry = 0
             if mode != "SILENT":
-                # if mode != Mode.SILENT:
-
                 chime.error()
         else:
             if retry == 1:
                 speak("Sorry, I didn't catch that.")
             if retry == 2:
                 speak("Could you say that again?")
-=======
 def get_mikes():
     with suppress():
         l = sr.Microphone.list_microphone_names()
@@ -260,13 +174,9 @@ def get_mikes():
 
 WAKE = "hey thea"
 
-# def contains_wake(command):
-# get_mikes()
-
 while True:
     print("Listening")
     command = listen().lower()
     if command.count(WAKE) > 0:
         speak("How can I help you?")
         command = listen()
->>>>>>> 83329773f8d1846a166e24a8d2743682f061f115
